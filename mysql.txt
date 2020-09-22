@@ -1,0 +1,182 @@
+1.) MariaDB [(none)]> create database electricity_bill;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [(none)]> use electricity_bill;
+Database changed
+MariaDB [electricity_bill]> create table electricity_connection_type(id int(11)primary key,connection_name varchar(20)not null);
+Query OK, 0 rows affected (0.336 sec)
+
+MariaDB [electricity_bill]> describe electricity_connection_type;
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| id              | int(11)     | NO   | PRI | NULL    |       |
+| connection_name | varchar(20) | NO   |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+2 rows in set (0.009 sec)
+
+
+2.MariaDB [electricity_bill]> create table slab(id int(11) primary key,connection_type_id int(11) ,from_unit int(11) not null,to_unit int(11) not null,rate double not null);
+Query OK, 0 rows affected (0.208 sec)
+
+3.MariaDB [electricity_bill]> create table building_type (id int(11), name varchar(100) not null,connection_id int(11));
+Query OK, 0 rows affected (0.216 sec)
+
+MariaDB [electricity_bill]> alter table building_type add foreign key (connection_id) references electricity_connection_type (id);
+Query OK, 0 rows affected (1.192 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> alter table building_type add foreign key (connection_id) references electricity_connection_type (id);
+Query OK, 0 rows affected (1.019 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+4.MariaDB [electricity_bill]> create table building(id int(11),owner_name varchar(100) not null,address varchar(100)not null,building_type_id int(11),contact_no varchar(100)not null,email_address varchar(100));
+Query OK, 0 rows affected (0.450 sec)
+
+5.MariaDB [electricity_bill]> alter table building change owner_name building_owner_name varchar(100);
+Query OK, 0 rows affected (0.616 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+6.MariaDB [electricity_bill]> alter table building modify address varchar(255);
+Query OK, 0 rows affected (0.761 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+7.MariaDB [electricity_bill]>alter table electricity_connection_type add constraint check_connection_name check(connection_name='home'orconnection_name='commericial');
+
+8.MariaDB [electricity_bill]> alter table building rename to building_details;
+Query OK, 0 rows affected (0.243 sec)
+
+9.MariaDB [electricity_bill]> drop table slab;
+Query OK, 0 rows affected (0.197 sec)
+
+MariaDB [electricity_bill]> show tables;
++-----------------------------+
+| Tables_in_electricity_bill  |
++-----------------------------+
+| building_details            |
+| building_type               |
+| electricity_connection_type |
++-----------------------------+
+3 rows in set (0.001 sec)
+
+10.MariaDB [electricity_bill]> drop table building_details;
+Query OK, 0 rows affected (0.195 sec)
+
+MariaDB [electricity_bill]> show tables;
++-----------------------------+
+| Tables_in_electricity_bill  |
++-----------------------------+
+| building_type               |
+| electricity_connection_type |
++-----------------------------+
+2 rows in set (0.001 sec)
+
+
+11.MariaDB [electricity_bill]> insert into electricity_connection_type(id,connection_name) values ('101','commercial'),('1','home');
+Query OK, 2 rows affected (0.056 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> select* from electricity_connection_type;
++-----+-----------------+
+| id  | connection_name |
++-----+-----------------+
+|   1 | home            |
+| 101 | commercial      |
++-----+-----------------+
+2 rows in set (0.000 sec)
+
+12.MariaDB [electricity_bill]> create table slab(id int(11) primary key,connection_type_id int(11) ,from_unit int(11) not null,to_unit int(11) not null,rate double not null);
+Query OK, 0 rows affected (0.254 sec)
+
+MariaDB [electricity_bill]> alter table slab add foreign key (connection_type_id) references electricity_connection_type (id);
+Query OK, 0 rows affected (0.926 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]>  insert into slab(id,connection_type_id,from_unit,to_unit,rate)values('10','1','0','255','2000'),('11','101','0','230','1500'),('13','102','0','300','3300');
+Query OK, 3 rows affected (0.054 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> select *from slab;
++----+--------------------+-----------+---------+------+
+| id | connection_type_id | from_unit | to_unit | rate |
++----+--------------------+-----------+---------+------+
+| 10 |                  1 |         0 |     255 | 2000 |
+| 11 |                101 |         0 |     230 | 1500 |
+| 13 |                102 |         0 |     300 | 3300 |
++----+--------------------+-----------+---------+------+
+3 rows in set (0.000 sec)
+
+
+13.MariaDB [electricity_bill]> insert into building_type (id,name,connection_type_id) values('1','dhoni','1'),('2','taichu','101'),('3','ranbeer','102'),('4','shopping_mall','103'),('5','resort','104');
+
+MariaDB [electricity_bill]> select *from building_type;
++------+---------------+---------------+
+| id   | name          | connection_id |
++------+---------------+---------------+
+|    1 | dhoni         |             1 |
+|    2 | taichu        |           101 |
+|    3 | ranbeer       |           102 |
+|    4 | shopping_mall |           103 |
+|    5 | resort        |           104 |
++------+---------------+---------------+
+5 rows in set (0.000 sec)
+
+14.MariaDB [electricity_bill]> update slab set from_unit='1' where rate ='2000';
+Query OK, 1 row affected (0.044 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [electricity_bill]> update slab set from_unit='1' where rate ='1500';
+Query OK, 1 row affected (0.050 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [electricity_bill]> update slab set from_unit='1' where rate ='3300';
+Query OK, 1 row affected (0.065 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [electricity_bill]> select * from slab;
++----+--------------------+-----------+---------+------+
+| id | connection_type_id | from_unit | to_unit | rate |
++----+--------------------+-----------+---------+------+
+| 10 |                101 |         1 |     255 | 2000 |
+| 11 |                102 |         1 |     230 | 1500 |
+| 13 |                103 |         1 |     300 | 3300 |
++----+--------------------+-----------+---------+------+
+3 rows in set (0.000 sec)
+
+15.MariaDB [electricity_bill]> update building_type set name='mall' where name='shopping_mall';
+Query OK, 1 row affected (0.051 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [electricity_bill]> select *from building_type;
++------+---------+---------------+
+| id   | name    | connection_id |
++------+---------+---------------+
+|    1 | dhoni   |             1 |
+|    2 | taichu  |           101 |
+|    3 | ranbeer |           102 |
+|    4 | mall    |           103 |
+|    5 | resort  |           104 |
++------+---------+---------------+
+
+5 rows in set (0.000 sec)
+
+16.MariaDB [electricity_bill]> delete from slab;
+Query OK, 3 rows affected (0.069 sec)
+
+MariaDB [electricity_bill]> select *from slab;
+Empty set (0.000 sec)
+
+17.
+MariaDB [electricity_bill]> delete from building_type where connection_id='1';
+Query OK, 1 row affected (0.057 sec)
+
+MariaDB [electricity_bill]> select *from building_type;
++------+---------+---------------+
+| id   | name    | connection_id |
++------+---------+---------------+
+|    2 | taichu  |           101 |
+|    3 | ranbeer |           102 |
+|    4 | mall    |           103 |
+|    5 | resort  |           104 |
++------+---------+---------------+
+4 rows in set (0.000 sec)
