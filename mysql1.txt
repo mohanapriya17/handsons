@@ -1,0 +1,99 @@
+MariaDB [electricity_bill]> select * from electricity_connection_type order by connection_name asc;
++-----+-----------------+
+| id  | connection_name |
++-----+-----------------+
+| 103 | bussiness       |
+| 101 | commercial      |
+| 102 | commercial      |
+| 104 | commercial      |
+|   1 | home            |
++-----+-----------------+
+5 rows in set (0.030 sec)
+
+MariaDB [electricity_bill]> select * from building_type order by name asc;
++------+---------+---------------+
+| id   | name    | connection_id |
++------+---------+---------------+
+|    4 | mall    |           103 |
+|    3 | ranbeer |           102 |
+|    5 | resort  |           104 |
+|    2 | taichu  |           101 |
++------+---------+---------------+
+4 rows in set (0.001 sec)
+
+MariaDB [electricity_bill]> create table building(id int(11),owner_name varchar(100) not null,address varchar(100)not null,building_type_id int(11),contact_no varchar(100)not null,email_address varchar(100));
+Query OK, 0 rows affected (0.255 sec)
+
+MariaDB [electricity_bill]> alter table building add primary key (id);
+Query OK, 0 rows affected (0.876 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> insert into building (id,owner_name,address,building_type_id,contact_no,email_address) values ('110','divya','chennai','2','12345','moha@gmail.com'),('111','mohana','pondy','3','12356','diva@gamil.com'),('112','bhuvana','hydrabad','4','89076','vel@gmail.com');
+Query OK, 3 rows affected (0.053 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> select * from building order by owner_name asc;
++-----+------------+----------+------------------+------------+----------------+
+| id  | owner_name | address  | building_type_id | contact_no | email_address  |
++-----+------------+----------+------------------+------------+----------------+
+| 112 | bhuvana    | hydrabad |                4 | 89076      | vel@gmail.com  |
+| 110 | divya      | chennai  |                2 | 12345      | moha@gmail.com |
+| 111 | mohana     | pondy    |                3 | 12356      | diva@gamil.com |
++-----+------------+----------+------------------+------------+----------------+
+3 rows in set (0.000 sec)
+
+MariaDB [electricity_bill]> create table electricity_reading(id int(11) primary key,meter_id int(11),day date not null,h1 int(11),h2 int(11),h3 int(11),h4 int(11),h5 int(11),h6 int(11),h7 int(11),h8 int(11),h9 int(11),h10 int(11),h11 int(11),h12 int(11),h13 int(11),h14 int(11),h15 int(11),h16 int(11),h17 int(11),h18 int(11),h19 int(11),h20 int(11),h21 int(11),h22 int(11),h23 int(11), h24 int(11));
+Query OK, 0 rows affected (0.215 sec)
+
+MariaDB [electricity_bill]> alter table electricity_reading add total_units int(11) not null;
+Query OK, 0 rows affected (0.111 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> insert into electricity_reading(id,meter_id,day,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23,h24,total_units) values('11','121','2000-12-03','11','12','13','14','15','16','16','17','12','200','70','80','90','80','70','60','60','50','40','30','20','10','10','20','3000'),('22','122','1998-10-23','22','11','33','44','55','66','77','88','99','11','100','22','32','34','56','78','90','20','60','70','40','30','20','23','5600' );
+Query OK, 2 rows affected (0.051 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+MariaDB [electricity_bill]> select * from electricity_reading order by total_units desc;
+
+MariaDB [electricity_bill]> create table meter (id int(11) primary key,meter_no varchar(100) not null,building_id int(11));
+Query OK, 0 rows affected (0.282 sec)
+
+MariaDB [electricity_bill]> insert into meter (id,meter_no,building_id) values('1','a12','110'),('2','a13','111'),('3','a14','112');
+Query OK, 3 rows affected (0.063 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> select meter_no from meter;
++----------+
+| meter_no |
++----------+
+| a12      |
+| a13      |
+| a14      |
++----------+
+3 rows in set (0.000 sec)
+
+MariaDB [electricity_bill]> select owner_name,contact_no from building order by owner_name desc;
++------------+------------+
+| owner_name | contact_no |
++------------+------------+
+| mohana     | 12356      |
+| divya      | 12345      |
+| bhuvana    | 89076      |
++------------+------------+
+3 rows in set (0.000 sec)
+
+MariaDB [electricity_bill]> insert into bill(id,meter_id,month,year,due_date,total_units,payable_amt,is_paid,payment_date,fine_amount) values('123','12','12','2','2020-10-2','2000','5000','1','2020-09-21','200'),('124','13','23','3','2019-12-31','3000','10000','0','2020-05-01','400');
+Query OK, 2 rows affected (0.047 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [electricity_bill]> select payable_amt,fine_amount,total_units from bill order by total_units;
++-------------+-------------+-------------+
+| payable_amt | fine_amount | total_units |
++-------------+-------------+-------------+
+|        5000 |         200 |        2000 |
+|       10000 |         400 |        3000 |
++-------------+-------------+-------------+
+2 rows in set (0.000 sec)
+
+
+
+
