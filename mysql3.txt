@@ -1,0 +1,124 @@
+
+1.MariaDB [electricity_bill]> select avg(h8) as average_8th_hour_consumption from electricity_reading;
++------------------------------+
+| average_8th_hour_consumption |
++------------------------------+
+|                      52.5000 |
++------------------------------+
+
+
+2.MariaDB [electricity_bill]> select avg(total_units) as avg_units_of_electricity from electricity_reading;
++--------------------------+
+| avg_units_of_electricity |
++--------------------------+
+|                1800.0000 |
++--------------------------+
+1 row in set (0.084 sec)
+
+
+
+3.MariaDB [electricity_bill]> select* from bill;
++------+----------+-------+------+------------+-------------+-------------+---------+--------------+-------------+
+| id   | meter_id | month | year | due_date   | total_units | payable_amt | is_paid | payment_date | fine_amount |
++------+----------+-------+------+------------+-------------+-------------+---------+--------------+-------------+
+|  123 |       12 |    12 |    2 | 2017-10-01 |       11000 |       12000 |       1 | 2020-09-21   |         200 |
+|  124 |       13 |    23 |    3 | 2017-10-01 |       10000 |       15000 |       0 | 2020-05-01   |         400 |
++------+----------+-------+------+------------+-------------+-------------+---------+--------------+-------------+
+2 rows in set (0.000 sec)
+
+MariaDB [electricity_bill]> select avg(payable_amt) as average_payable_amount from bill where payable_amt>10000;
++------------------------+
+| average_payable_amount |
++------------------------+
+|                  13500 |
++------------------------+
+
+
+4.MariaDB [electricity_bill]> update bill set payment_date='2018-09-21' where payment_date='2020-09-21';
+Query OK, 1 row affected (0.078 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [electricity_bill]> update bill set payment_date='2018-05-21' where payment_date='2020-05-01';
+Query OK, 1 row affected (0.065 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [electricity_bill]> select avg(fine_amount) as average_fine_amount from bill where year(payment_date)=2018;
++---------------------+
+| average_fine_amount |
++---------------------+
+|                 300 |
++---------------------+
+1 row in set (0.040 sec)
+
+
+5.
+MariaDB [electricity_bill]> select sum(payable_amt) as sum_payable_amount from bill;
++--------------------+
+| sum_payable_amount |
++--------------------+
+|              27000 |
++--------------------+
+1 row in set (0.034 sec)
+
+6. MariaDB [electricity_bill]> select sum(payable_amt) as sum_payable_amount from bill where due_date='2017-10-01';
++--------------------+
+| sum_payable_amount |
++--------------------+
+|              27000 |
++--------------------+
+1 row in set (0.001 sec)
+
+
+7.MariaDB [electricity_bill]> select min(total_units) as min_total_units  from electricity_reading;
++-----------------+
+| min_total_units |
++-----------------+
+|             600 |
++-----------------+
+1 row in set (0.045 sec)
+
+
+8.
+MariaDB [electricity_bill]> insert into bill(id,meter_id,month,year,due_date,total_units,payable_amt,is_paid,payment_date,fine_amount) values('124','32','52','5','2020-10-2','2000','5000','1','2020-09-21','200'),('126','14','13','4','2019-12-31','3000','10000','0','2020-05-01','700');
+Query OK, 2 rows affected (0.082 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+MariaDB [electricity_bill]> select * from bill;
++------+----------+-------+------+------------+-------------+-------------+---------+--------------+-------------+
+| id   | meter_id | month | year | due_date   | total_units | payable_amt | is_paid | payment_date | fine_amount |
++------+----------+-------+------+------------+-------------+-------------+---------+--------------+-------------+
+|  123 |       12 |    12 |    2 | 2017-10-01 |       11000 |       12000 |       1 | 2018-09-21   |         200 |
+|  124 |       13 |    23 |    3 | 2017-10-01 |       10000 |       15000 |       0 | 2018-05-21   |         400 |
+|  124 |       32 |    52 |    5 | 2020-10-02 |        2000 |        5000 |       1 | 2020-09-21   |         200 |
+|  126 |       14 |    13 |    4 | 2019-12-31 |        3000 |       10000 |       0 | 2020-05-01   |         700 |
++------+----------+-------+------+------------+-------------+-------------+---------+--------------+-------------+
+4 rows in set (0.000 sec)
+MariaDB [electricity_bill]> select min(fine_amount) from bill where fine_amount!=(select min(fine_amount) from bill);
++------------------+
+| min(fine_amount) |
++------------------+
+|              400 |
++------------------+
+1 row in set (0.001 sec)
+
+
+
+9.MariaDB [electricity_bill]> select month,total_units/month as minimum_units from bill;
++-------+---------------+
+| month | minimum_units |
++-------+---------------+
+|    12 |      916.6667 |
+|    23 |      434.7826 |
+|    52 |       38.4615 |
+|    13 |      230.7692 |
++-------+---------------+
+4 rows in set (0.029 sec)
+
+10.MariaDB [electricity_bill]> select Stddev(fine_amount) as Standard_deviation_amount from bill where year(payment_date)='2018';
++---------------------------+
+| Standard_deviation_amount |
++---------------------------+
+|                       100 |
++---------------------------+
+1 row in set (0.000 sec)
+
+
