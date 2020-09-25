@@ -1,0 +1,105 @@
+1.
+MariaDB [electricity_bill]> select owner_name,length(owner_name) as name_length from building order by owner_name asc;
++------------+-------------+
+| owner_name | name_length |
++------------+-------------+
+| Mohan      |           5 |
+| Mohana     |           6 |
+| Nicholas   |           8 |
++------------+-------------+
+
+
+2.MariaDB [electricity_bill]> select owner_name,contact_no from building where length(owner_name)=(select min(length(owner_name)) from building);
++------------+------------+
+| owner_name | contact_no |
++------------+------------+
+| Mohan      | 89076      |
+
+
+
+3.
+MariaDB [electricity_bill]> select owner_name,concat(contact_no,'-',email_address) as contact_details from building  order by owner_name asc;
++------------+----------------------+
+| owner_name | contact_details      |
++------------+----------------------+
+| bhuvana    | 89076-vel@gmail.com  |
+| divya      | 12345-moha@gmail.com |
+| Mohan      | 89076-               |
+| Mohana     | 12345-               |
+| mohana     | 12356-diva@gamil.com |
+| Nicholas   | 12356-diva@gamil.com |
++------------+----------------------+
+6 rows in set (0.000 sec)
+
+
+4.MariaDB [electricity_bill]> select substring(meter_id,1,3) as meter_code from bill order by meter_code;
++------------+
+| meter_code |
++------------+
+| 12         |
+| 13         |
+| 14         |
+| 32         |
++------------+
+
+
+5.MariaDB [electricity_bill]> select left(owner_name,3)name_code,contact_no from building order by owner_name;
++-----------+------------+
+| name_code | contact_no |
++-----------+------------+
+| bhu       | 89076      |
+| div       | 12345      |
+| Moh       | 89076      |
+| Moh       | 12345      |
+| moh       | 12356      |
+| Nic       | 12356      |
++-----------+------------+
+6 rows in set (0.001 sec)
+
+6.MariaDB [electricity_bill]> select * from building where owner_name like '%di%' order by owner_name;
++-----+------------+---------+------------------+------------+----------------+
+| id  | owner_name | address | building_type_id | contact_no | email_address  |
++-----+------------+---------+------------------+------------+----------------+
+| 115 | divya      | chennai |                2 | 12345      | moha@gmail.com |
++-----+------------+---------+------------------+------------+----------------+
+1 row in set (0.001 sec)
+
+
+7.MariaDB [electricity_bill]> select sum(fine_amount) as total_fine from bill where payment_date between '2017-10-01' and '2019-12-31';
++------------+
+| total_fine |
++------------+
+|        600 |
++------------+
+1 row in set (0.000 sec)
+
+
+
+8.MariaDB [electricity_bill]> select day,total_units from electricity_reading where day between '2000-12-03' and '1998-10-23';
+
+
+9.MariaDB [electricity_bill]> select due_date,payable_amt from bill where payment_date not between '2018-05-21' and '2020-09-21';
+
+
+SUBQUERIES:
+MariaDB [electricity_bill]> select bl.id,bl.meter_id,bl.year,bl.due_date,bl.total_units,bl.payable_amt.bl,is_paid,bl.payment_date,bl.fine_amount,m.meter_no from bill bi left join meter m on bl.meter_id=m.id order by payable_amt;
+
+MariaDB [electricity_bill]> select m.meter_no,b.owner_name,b.address,b.contact_no from building b left join meter m on m.building_id=building_type_id;
++----------+------------+----------+------------+
+| meter_no | owner_name | address  | contact_no |
++----------+------------+----------+------------+
+| NULL     | Mohana     | chennai  | 12345      |
+| NULL     | Nicholas   | pondy    | 12356      |
+| NULL     | Mohan      | hydrabad | 89076      |
+| NULL     | divya      | chennai  | 12345      |
+| NULL     | mohana     | pondy    | 12356      |
+| NULL     | bhuvana    | hydrabad | 89076      |
++----------+------------+----------+------------+
+6 rows in set (0.192 sec)
+
+
+MariaDB [electricity_bill]> select m.meter_no, b.owner_name, b.address, b.contact_no,bt.name,ect.connection_name from building b left join meter m on m.building_id=b.id left join building_type bt on bt.id=b.building_type_id left join electricity_connection_type ect on ect.id=bt.connection_type_id order by owner_name and meter_no;
+
+
+
+MariaDB [electricity_bill]> select b.owner_name, b.address, m.meter_no,bl.payable_amt,bl.fine_amount from building b left join meter m on m.building_id=b.id left join bill bl on bl.meter_id=m.id where bl.fine_amount=(select max(fine_amount) from bill) order by b.owner_name;
